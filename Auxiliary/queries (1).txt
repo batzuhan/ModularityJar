@@ -1,0 +1,32 @@
+
+LOAD CSV WITH HEADERS FROM "https://cdn.discordapp.com/attachments/253948355816718347/568132606403674113/CSVNodes.csv" AS nodes
+CREATE (p:class { name: nodes.Column2 })
+
+LOAD CSV WITH HEADERS FROM "https://cdn.discordapp.com/attachments/253948355816718347/568118710070673408/CSVDEP.csv" AS edges
+MATCH (a:class { name: edges.Column2})
+MATCH (b:class { name: edges.Column3 })
+CREATE (a)-[:DEPENDS]->(b);
+
+LOAD CSV WITH HEADERS FROM "https://cdn.discordapp.com/attachments/253948355816718347/573228556071600133/ACDCOutput.csv" AS element
+CREATE (p:class { name: element.Column3, group: element.Column2  })
+----------------------------------------------------------------------------------
+CREATE CONSTRAINT ON (o:Organization) ASSERT o.name IS UNIQUE;
+CREATE CONSTRAINT ON (c:Class) ASSERT c.name IS UNIQUE;
+
+WITH 'https://cdn.discordapp.com/attachments/253948355816718347/573228556071600133/ACDCOutput.csv' AS url
+LOAD CSV WITH HEADERS FROM url AS row
+MERGE (c:Class {name:row.Column3})
+MERGE (o:Organization {name:row.Column2})
+CREATE (c)-[con:INVOLVED_WITH]->(o)
+SET con.connection=row.Connection, con.source=row.`Source(s)`
+
+MATCH (n) RETURN (n)
+
+
+
+
+WITH 'https://cdn.discordapp.com/attachments/253948355816718347/577828704248397834/CSVDepMaps.csv' AS url
+LOAD CSV WITH HEADERS FROM url AS relation
+MATCH (c:Organization1 {name:relation.Column1})
+MATCH (o:Organization2 {name:relation.Column2})
+CREATE (c)-[con:relation.Column3]->(o)

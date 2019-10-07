@@ -1,0 +1,11 @@
+
+LOAD CSV WITH HEADERS FROM "https://cdn.discordapp.com/attachments/253948355816718347/568132606403674113/CSVNodes.csv" AS nodes
+CREATE (p:class { name: nodes.Column2 })
+
+LOAD CSV WITH HEADERS FROM "https://cdn.discordapp.com/attachments/253948355816718347/568118710070673408/CSVDEP.csv" AS edges
+MATCH (a:class { name: edges.Column2})
+MATCH (b:class { name: edges.Column3 })
+CREATE (a)-[:d]->(b);
+
+MATCH (a:class)
+RETURN a
