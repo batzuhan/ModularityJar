@@ -2,7 +2,7 @@ import java.util.Random;
 import java.util.LinkedList;
 import java.util.List;
 
-public abstract class Chromosome {
+public class Chromosome {
 
     public int nGenes;
     public List<Integer> genes;
@@ -47,26 +47,26 @@ public abstract class Chromosome {
         this.genes = genes;
         calculateFitness();
     }
+    public Chromosome clone() {
+        Chromosome B = new Chromosome(nGenes);
+        return B;
+    }
+
 
     public double getFitnessScore() {
         return fitnessScore;
     }
 
-    public abstract void calculateFitness();
+    public void calculateFitness() {
+       // FIXME: Dummy fitness function
 
+       double fitnessScore = 0.0;
+      for (int i = 0; i < this.genes.size(); ++i) {
+           fitnessScore += this.genes.get(i);
+       }
 
-//    public void calculateFitness() {
-//        // FIXME: Dummy fitness function
-//
-//        double fitnessScore = 0.0;
-//        for (int i = 0; i < this.genes.size(); ++i) {
-//            fitnessScore += this.genes.get(i);
-//        }
-//
-//        this.fitnessScore = fitnessScore;
-//    }
-
-    public abstract Chromosome clone();
+       this.fitnessScore = fitnessScore;
+  }
 
     @Override
     public String toString() {

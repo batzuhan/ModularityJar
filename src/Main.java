@@ -13,6 +13,9 @@ public class Main {
         loadDeps();
         populate();
         Utility utility = new Utility(orgs);
+        Chromosome chromo = new Chromosome(48);
+
+        System.out.println(utility.calculateModularity(chromo));
         //printCSV();
     }
 
