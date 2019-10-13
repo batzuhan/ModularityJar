@@ -60,7 +60,16 @@ public class Main {
                 tokenizer.nextToken();
                 String firstNodeName = tokenizer.nextToken();
                 String secondNodeName = tokenizer.nextToken();
-                findNode(firstNodeName).getParent().getDeps().add(findNode(secondNodeName).getParent());
+                Node sourceNode = findNode(firstNodeName);
+                Node dependentNode = findNode(secondNodeName);
+                if(sourceNode.getParent().equals(dependentNode.getParent())){
+                    sourceNode.setInDepCount(sourceNode.getInDepCount() + 1);
+                    dependentNode.setInDepCount(dependentNode.getInDepCount() + 1);
+                }else {
+                    sourceNode.setOutDepCount(sourceNode.getOutDepCount() + 1);
+                    dependentNode.setOutDepCount(dependentNode.getOutDepCount() + 1);
+                }
+                sourceNode.getParent().getDeps().add(dependentNode.getParent());
             }
         } catch (FileNotFoundException e) {
             e.getStackTrace();

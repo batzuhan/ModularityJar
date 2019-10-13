@@ -19,7 +19,7 @@ public class Utility {
         return sum;
     }
 
-    public double calculateModularity(GeneticAlgorithm genA) {
+    /*public double calculateModularity(GeneticAlgorithm genA) {
         double modularity = 1.0 / (2.0 * calculateEdgeCount());
         double aux = 0.0;
 
@@ -31,7 +31,7 @@ public class Utility {
         }
         modularity = modularity * aux;
         return modularity;
-    }
+    }*/
 
     private int tether(Organization A, Organization B) {
         if (A != null) {
