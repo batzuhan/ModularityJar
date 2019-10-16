@@ -15,7 +15,7 @@ public class Main {
         Utility utility = new Utility(orgs);
         Chromosome chromo = new Chromosome(48);
 
-        System.out.println(utility.calculateModularity(chromo));
+        System.out.println(utility.calculateModularity());
         //printCSV();
     }
 
@@ -65,10 +65,14 @@ public class Main {
                 String secondNodeName = tokenizer.nextToken();
                 Node sourceNode = findNode(firstNodeName);
                 Node dependentNode = findNode(secondNodeName);
-                if(sourceNode.getParent().equals(dependentNode.getParent())){
+                if (sourceNode.getParent().equals(dependentNode.getParent())) {
+                    sourceNode.getConnected().add(dependentNode);
+                    dependentNode.getConnected().add(sourceNode);
                     sourceNode.setInDepCount(sourceNode.getInDepCount() + 1);
                     dependentNode.setInDepCount(dependentNode.getInDepCount() + 1);
-                }else {
+                } else {
+                    sourceNode.getConnected().add(dependentNode);
+                    dependentNode.getConnected().add(sourceNode);
                     sourceNode.setOutDepCount(sourceNode.getOutDepCount() + 1);
                     dependentNode.setOutDepCount(dependentNode.getOutDepCount() + 1);
                 }

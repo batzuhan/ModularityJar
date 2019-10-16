@@ -1,13 +1,17 @@
+import java.util.ArrayList;
+
 public class Node {
     private String name;
     private Organization parent;
     private int inDepCount;
     private int outDepCount;
+    private ArrayList<Node> connected;
 
     public Node(String name) {
         this.name = name;
         this.inDepCount = 0;
         this.outDepCount = 0;
+        this.connected = new ArrayList<>();
     }
 
     public String getName() {
@@ -37,4 +41,9 @@ public class Node {
     public void setOutDepCount(int outDepCount) {
         this.outDepCount = outDepCount;
     }
+
+    public ArrayList<Node> getConnected() {
+        return connected;
+    }
+
 }

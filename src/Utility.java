@@ -1,60 +1,68 @@
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 
 public class Utility {
-    private int nodeCount;
+
     private int clusterCount;
     private ArrayList<Organization> orgs;
 
     public Utility(ArrayList<Organization> orgs) {
         this.orgs = orgs;
-        this.nodeCount = calculateEdgeCount();
         this.clusterCount = orgs.size();
     }
 
-    private int calculateEdgeCount() {
-        int sum = 0;
-        for (int i = 0; i < orgs.size(); i++) {
-            sum += orgs.get(i).getNodes().size();
-        }
-        return sum;
-    }
 
-    public double calculateModularity(Chromosome chromo) {
-        double modularity = 1.0 / (2.0 * calculateEdgeCount());
-        double aux = 0.0;
+    public double calculateModularity() {
+        double sum = 0;
+        double m2 = (2 * this.getNumberOfEdges());
 
+        Set<Node> nodes = new HashSet<>();
         for (int i = 0; i < orgs.size(); ++i) {
-            for (int j = 0; j < orgs.size(); ++j) {
-                aux += (tether(orgs.get(i), orgs.get(j)) - ((calculateDegree(i) * calculateDegree(j)) / (2.0 * calculateEdgeCount())))
-                        * calculateDelta(chromo.getGenes().get(i), chromo.getGenes().get(j));
+            for (int j = 0; j < orgs.get(i).getNodes().size(); ++j) {
+                nodes.add(orgs.get(i).getNodes().get(j));
             }
         }
-        modularity = modularity * aux;
-        return modularity;
-    }
 
-    private int tether(Organization A, Organization B) {
-            if(A.equals(B)){
-                return 1;
+        for (Node v1 : nodes) {
+            for (Node v2 : nodes) {
+                if (!v1.equals(v2)) {
+                    sum += isNeighbor(v1, v2) - ((double) calculateDegree(v1) * (double) calculateDegree(v2) / m2);
+
+                }
             }
-
-        return 0;
+        }
+        return sum / m2;
     }
 
-    private int calculateDelta(int geneA, int geneB) {
-        return geneA == geneB ? 1 : 0;
-    }
 
-    private int calculateDegree(int node) {
+    private int calculateDegree(Node node) {
         int degree = 0;
 
-        degree += orgs.get(node).getDeps().size(); //needs checking, probably faulty
+        degree += node.getConnected().size();
 
         return degree;
     }
 
-    public int getNodeCount() {
-        return nodeCount;
+
+    private int isNeighbor(Node n1, Node n2) {
+        if (n1.getParent().equals(n2.getParent())) {
+            return 1;
+        } else {
+            return 0;
+        }
+    }
+
+    private int getNumberOfEdges() {
+        int aux = 0;
+        for (int i = 0; i < orgs.size(); ++i) {
+            for (int j = 0; j < orgs.get(i).getNodes().size(); ++j) {
+                aux += orgs.get(i).getNodes().get(j).getInDepCount();
+                aux += orgs.get(i).getNodes().get(j).getOutDepCount();
+            }
+        }
+
+        return aux;
     }
 
     public int getClusterCount() {
