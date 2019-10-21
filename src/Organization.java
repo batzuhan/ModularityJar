@@ -25,18 +25,4 @@ public class Organization {
     public ArrayList<Organization> getDeps() {
         return deps;
     }
-
-    public void populateMap() {
-        for (int i = 0; i < deps.size(); i++) {
-            if (depMap.containsKey(deps.get(i))){
-                depMap.put(deps.get(i),depMap.get(deps.get(i)) + 1);
-            }else {
-                depMap.put(deps.get(i), 1);
-            }
-        }
-    }
-
-    public HashMap<Organization, Integer> getDepMap() {
-        return depMap;
-    }
 }

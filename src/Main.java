@@ -1,43 +1,52 @@
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.PrintStream;
+import java.io.*;
 import java.util.*;
 
 public class Main {
     static ArrayList<Organization> orgs = new ArrayList<>();
 
     public static void main(String[] args) {
-        loadOrganizations();
-        loadNodes();
-        loadDeps();
-        populate();
-        Utility utility = new Utility(orgs);
-        Chromosome chromo = new Chromosome(48);
+        try {
+            if (args[0] != null && args[1] != null){
+                loadOrganizations(args[0]);
+                loadNodes(args[0]);
+                loadDeps(args[1]);
+                Utility utility = new Utility(orgs);
 
-        System.out.println(utility.calculateModularity());
-        //printCSV();
+                System.out.println(utility.calculateModularity());
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
-    private static void loadOrganizations() {
+    private static void loadOrganizations(String reader) {
         try {
-            File file = new File("Auxiliary/CSVOrganizations.txt");
+            System.out.println("Trying to load cluster names from the file.");
+            File file = new File(reader);
             Scanner s = new Scanner(file);
             while (s.hasNextLine()) {
                 String str = s.nextLine();
                 StringTokenizer tokenizer = new StringTokenizer(str);
-                String s1 = tokenizer.nextToken();
-                Organization org = new Organization(s1);
-                orgs.add(org);
+                tokenizer.nextToken();
+                String s2 = tokenizer.nextToken();
+                if(findOrganization(s2) == null) {
+                    Organization org = new Organization(s2);
+                    orgs.add(org);
+                    System.out.println(org.getName());
+                } else {
+                    //continue
+                }
             }
-        } catch (FileNotFoundException e) {
+            System.out.println("Cluster names loaded successfully.");
+        } catch (Exception e) {
             e.getStackTrace();
         }
     }
 
-    private static void loadNodes() {
+    private static void loadNodes(String reader) {
         try {
-            File file = new File("Auxiliary/contain.rsf");
+            System.out.println("Trying to load the classes from the file.");
+            File file = new File(reader);
             Scanner s = new Scanner(file);
             while (s.hasNextLine()) {
                 String str = s.nextLine();
@@ -48,14 +57,16 @@ public class Main {
                 findOrganization(orgName).getNodes().add(node);
                 node.setParent(findOrganization(orgName));
             }
-        } catch (FileNotFoundException e) {
+            System.out.println("Classes loaded successfully.");
+        } catch (Exception e) {
             e.getStackTrace();
         }
     }
 
-    private static void loadDeps() {
+    private static void loadDeps(String reader) {
         try {
-            File file = new File("Auxiliary/depends.rsf");
+            System.out.println("Trying to load dependencies from the file.");
+            File file = new File(reader);
             Scanner s = new Scanner(file);
             while (s.hasNextLine()) {
                 String str = s.nextLine();
@@ -78,7 +89,8 @@ public class Main {
                 }
                 sourceNode.getParent().getDeps().add(dependentNode.getParent());
             }
-        } catch (FileNotFoundException e) {
+            System.out.println("Dependencies loaded successfully.");
+        } catch (Exception e) {
             e.getStackTrace();
         }
     }
@@ -99,31 +111,6 @@ public class Main {
             }
         }
         return null;
-    }
-
-    private static void populate() {
-        for (int i = 0; i < orgs.size(); i++) {
-            orgs.get(i).populateMap();
-        }
-    }
-
-    private static void printCSV() {
-        try {
-            PrintStream out = new PrintStream(new FileOutputStream(
-                    "CSVDepMaps.txt"));
-            for (int i = 0; i < orgs.size(); i++) {
-                Set set = orgs.get(i).getDepMap().entrySet();
-                Iterator iterator = set.iterator();
-                while (iterator.hasNext()) {
-                    Map.Entry mentry = (Map.Entry) iterator.next();
-                    out.println(orgs.get(i).getName() + " " + ((Organization) mentry.getKey()).getName() + " " + mentry.getValue());
-                }
-            }
-            out.close();
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
-
     }
 }
 
